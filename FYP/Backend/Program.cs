@@ -17,7 +17,7 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 
 builder.Services.AddDbContext<PMASCITIDbContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("Demo1")));
+    options.UseSqlServer(builder.Configuration.GetConnectionString("Demo3")));
 
 builder.Services.AddTransient<UserService>();
 builder.Services.AddTransient<ProjectService>();

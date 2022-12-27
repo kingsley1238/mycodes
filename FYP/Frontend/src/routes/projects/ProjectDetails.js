@@ -24,15 +24,13 @@ import { GenerateReport } from './GenerateReport'
 export const ProjectDetails = () => {
   const dispatch = useDispatch()
 
-  const [overallData, setOverallData] = useState([]) //king (new state variable called "overallData" to store the data that you will retrieve from the database.)
-
   const { projectId } = useParams()
 
   const [projectDetails, setProjectDetails] = useState({
     "id": "",
     "name": "",
     "description": ""
-  });
+  })
 
 
   const [latestCommit, setLatestCommit] = useState(null)
@@ -55,7 +53,6 @@ export const ProjectDetails = () => {
   const [Hidestate, setHideState] = useState(false)
 
 
-
   useEffect(() => {
     //Getting all milestone data
     const getmilestoneList = async () => {
@@ -63,17 +60,6 @@ export const ProjectDetails = () => {
       let milestoneList = resp.data
       setMilestoneList(milestoneList)
     }
-
-    //king (make a call to the GetAllMilestones function to retrieve the data from the database. )
-    const getOverallData = async () => {
-      // Make a GET request to the GetAllMilestones function
-      let resp = await axios.get(`${process.env.REACT_APP_API_SERVER}/api/projects/${projectId}/milestones/GetAllMilestones`)
-      let overallData = resp.data
-      setOverallData(overallData)
-      }
-    
-    //king end
-
     // Populating the details on the page
     const loadPageData = async () => {
       let response = await axios.get(`${process.env.REACT_APP_API_SERVER}/api/projects/${projectId}`)
@@ -106,20 +92,11 @@ export const ProjectDetails = () => {
     loadPageData()
     getPaymentInformation()
     getmilestoneList()
-    getOverallData()  // king (Call the getOverallData function)
   }, [projectId])
 
-  //king
   const handler = useCallback((evt) => {
-    if (evt.target.value === "Overall Milestones") {
-      setSelected("Overall Milestones");
-      setChartData(overallData); // send the overall data to the charting function
-    } else {
-      setSelected(milestoneList[evt.target.value]);
-      setChartData(milestoneList[evt.target.value]["tasks"]);
-    }
-  }, [overallData, milestoneList])
-  //king end  
+    setSelected(milestoneList[evt.target.value]);
+  }, [milestoneList, setSelected]);
 
 
   useEffect(() => {
@@ -167,7 +144,7 @@ export const ProjectDetails = () => {
   }
 
   return (
-    
+
 
     <LayoutSidebar>
       <ProjectCompletionMarker isCompleted={projectDetails["isCompleted"]} />
@@ -261,37 +238,23 @@ export const ProjectDetails = () => {
 
       <div ><GenerateReport /></div>
 
-
-      
       <div>
-      <ChartFunction data={overallData} />
+        <ChartFunction />
       </div>
-
-      
-
 
       <div class="mt-4">
         <h6 class="mb-2">Project Analytics</h6>
         <select id="chart-filter" class="form-select form-select-sm mt-2" onChange={handler}>
-          <option value="Overall Milestones">Overall Milestones</option>
-          {selected === "Overall Milestones" && <ChartFunction data={overallData} />}
-          
+          {/* <option value="" selected="selected" onClick={handleHide}>All Milestones</option>  */}
           {Object.entries(milestoneList).map(([retrieveid, obj]) => selected && retrieveid === selected.id
             ? <option onClick={ChartFunction(retrieveid.id.toLowerCase())} selected key={obj.id} value={obj.id}>{obj.name}</option>
             : <><option onClick key={obj.id} value={obj.id}>{obj.name}</option>
-            
 
             </>
           )}
+
         </select>
-
       </div>
-
-    
-
-
-
-
       {/* <ChartFunction /> */}
       <div className="chartFunction">
 
@@ -310,7 +273,7 @@ export const ProjectDetails = () => {
 
       </div>
 
-      
+
 
 
 

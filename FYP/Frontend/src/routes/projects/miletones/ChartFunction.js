@@ -7,7 +7,7 @@ import { useParams } from "react-router-dom";
 
 
 
-const ChartFunction = (props) => {
+const ChartFunction = (milestoneId) => {
   let pieChartConfig;
   let barChartConfig;
   let pieChart;
@@ -16,38 +16,21 @@ const ChartFunction = (props) => {
   let backgroundColors;
   let barChartData;
   
-  //king
-  const [chartData, setChartData] = useState(props.data); // accept the data as a prop and set the component's state with the data
-  //king
-  
   const { projectId } = useParams()
-  useEffect(()=>{
-    //call VS api for overall list of milestones
-  })
-
-
+  
   // Chart defaults
   Chart.defaults.font.size = 16;
 
-
-
   async function getChartData(projectId, milestoneId) {
-    if (milestoneId === "Overall Milestone") {
-      // Call the GetAllMilestones function here to retrieve the data for all milestones in the project
-      let response = await axios.get(`${process.env.REACT_APP_API_SERVER}/api/projects/${projectId}/milestones/chart_data`)
-      if (response.status === 200) {
-        return await response.data
-      }
-    } else {
-      // Make a call to the API to retrieve the data for the selected milestone
-      let response = await axios.get(`${process.env.REACT_APP_API_SERVER}/api/projects/${projectId}/chart_data?milestoneId=${milestoneId}`)
-      if (response.status === 200) {
-        return await response.data
-      }
+
+    let response = await axios.get(`${process.env.REACT_APP_API_SERVER}/api/projects/${projectId}/chart_data?milestoneId=${milestoneId}`)
+    if (response.status === 200) {
+      console.log("Response Success")
+      return await response.data
     }
+
+
   }
-  
-  
 
 
 
@@ -105,7 +88,7 @@ const ChartFunction = (props) => {
       barChartData = {
         labels: chartData["labels"],
         datasets: [{
-          data: chartData["data"],  
+          data: chartData["data"],
           backgroundColor: backgroundColors
         }]
       };
@@ -194,7 +177,7 @@ const ChartFunction = (props) => {
   $(function () {
 
     loadGraphs();
-    //Add overall option 
+
     $("#chart-filter").on("change", function () {
       getChartData(projectId, $(this).val()).then(chartData => {
         const pieChartData = getPieChartData(chartData, backgroundColors)
